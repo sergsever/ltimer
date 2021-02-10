@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Threading;
+using System.Windows;
+using System.Windows.Forms;
 
 namespace ltimer.ModelsViews
 {
@@ -19,23 +21,45 @@ namespace ltimer.ModelsViews
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(name));
 		}
-
+		private MainWindow View { get; set; }
 		protected DateTime Start;
-		private string _left;
+		protected NotifyIcon NI { get; set; }
+		private string _left = "";
+
+		public void SetView(MainWindow view)
+		{
+			View = view;
+		}
+
+		protected void MinimizeToTray(Window view)
+		{
+			NI = new NotifyIcon();
+			NI.Icon = new System.Drawing.Icon("ltimer.ico");
+			NI.Text = "LTimer: " + TimeLeft;
+			NI.Visible = true;
+			NI.DoubleClick +=
+			delegate (object sender, EventArgs args)
+			{
+				view.Show();
+				view.WindowState = WindowState.Normal;
+			};
+
+			view.WindowState = WindowState.Minimized;
+		}
 		public int Minutes { get; set; }
 		public String TimeLeft {
 			get
 			{
-				Debug.WriteLine("Get TimeLeft: " + _left);
 				return _left; 
 			}
 			set
 			{
 				if (_left != value)
 				{
-					Debug.WriteLine("Left: " + value);
 
 					_left = value;
+					if (NI != null)
+						NI.Text = "LTimer: " + _left;
 					NotifyPropertyChanged("TimeLeft");
 				}
 			} }
@@ -53,7 +77,8 @@ namespace ltimer.ModelsViews
 			Start = DateTime.Now;
 			TimeLeft = Minutes.ToString();
 			Task count = new Task(Count);
-			count.Start(); 
+			count.Start();
+			MinimizeToTray(View);
 //			Count();
 		}
 

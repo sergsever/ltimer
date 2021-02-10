@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ltimer.ModelsViews;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,16 +27,10 @@ namespace ltimer
 		{
 			InitializeComponent();
 
-			NotifyIcon ni = new NotifyIcon();
-			ni.Icon = new System.Drawing.Icon("ltimer.ico");
-			ni.Visible = true;
-			ni.DoubleClick += 
-			delegate(object sender, EventArgs args)
+			if (this.DataContext != null )
 			{
-				this.Show();
-				this.WindowState = WindowState.Normal;
-			};
-
+				((MainViewModel)this.DataContext).SetView(this);
+			}
 		}
 
 		protected override void OnStateChanged(EventArgs e)
