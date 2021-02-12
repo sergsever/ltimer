@@ -10,6 +10,8 @@ using System.Windows.Input;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Controls;
+using System.Globalization;
 
 namespace ltimer.ModelsViews
 {
@@ -74,7 +76,6 @@ namespace ltimer.ModelsViews
 		protected void Wait(object arg)
 		{
 			Debug.WriteLine("Wait command");
-			Start = DateTime.Now;
 			TimeLeft = Minutes.ToString();
 			Task count = new Task(Count);
 			count.Start();
@@ -84,11 +85,11 @@ namespace ltimer.ModelsViews
 
 		protected void Count()
 		{
-//			Stopwatch watch = new Stopwatch();
-//			Debug.WriteLine("Diff: " + (DateTime.Now - Start).TotalMinutes);
+			Start = DateTime.Now;
 			while ((DateTime.Now - Start).TotalMinutes < Minutes)
 			{
-//				Debug.WriteLine("Diff: " + (DateTime.Now - Start).TotalMinutes);
+				Debug.WriteLine("Diff: " + (DateTime.Now - Start).TotalMinutes);
+
 				if ((DateTime.Now - Start).TotalMinutes < Minutes)
 				{
 					TimeSpan span = DateTime.Now - Start;
@@ -99,10 +100,20 @@ namespace ltimer.ModelsViews
 				else
 				{
 					TimeLeft = "All";
-					System.Media.SystemSounds.Asterisk.Play();
+					System.Media.SystemSounds.Exclamation.Play();
+					NI.Icon = new System.Drawing.Icon("ready.ico");
+					break;
 				}
 				Thread.Sleep(5000);
 			}
+			Debug.WriteLine("After Loop");
+			TimeLeft = "All";
+			System.Media.SystemSounds.Exclamation.Play();
+			NI.Icon = new System.Drawing.Icon("ready.ico");
+
+
 		}
+
+		
 	}
 }
